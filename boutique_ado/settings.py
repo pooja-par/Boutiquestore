@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,9 @@ SECRET_KEY = 'django-insecure-71j6!68chrn+i!p+%))#8*fpyq5$k8hyc$&$_8$9_inixw)45_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['8000-poojapar-boutiquestore-58ybpi4atv7.ws-eu116.gitpod.io']
+ALLOWED_HOSTS = ['8000-poojapar-boutiquestore-58ybpi4atv7.ws-eu116.gitpod.io',
+                  '127.0.0.1', 
+                  'localhost',]
 
 
 # Application definition
@@ -37,6 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
 ]
 
 MIDDLEWARE = [
@@ -47,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware', 
 ]
 
 ROOT_URLCONF = 'boutique_ado.urls'
@@ -59,13 +67,37 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request',
+                'django.template.context_processors.request', # required by allauth
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
         },
     },
 ]
+
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by email
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+SITE_ID = 1
+
+# Output email to the console
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Allauth settings
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'  # Users can log in with either username or email
+ACCOUNT_EMAIL_REQUIRED = True  # Email is required for signup
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # Email verification is mandatory
+ACCOUNT_SIGNUP_EMAIL_ENTER_TWICE = True  # Require users to enter email twice during signup
+ACCOUNT_USERNAME_MIN_LENGTH = 4  # Minimum length for usernames
+
+# Login settings
+LOGIN_URL = '/accounts/login/'  # The URL to the login page
+LOGIN_REDIRECT_URL = '/'  # Redirect here after successful login
 
 WSGI_APPLICATION = 'boutique_ado.wsgi.application'
 
